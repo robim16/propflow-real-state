@@ -1,0 +1,3 @@
+package com.propflow.auth.infrastructure.entrypoint.web.dto;
+
+public record RefreshRequest(String refreshToken) { }
