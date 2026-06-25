@@ -1,62 +1,51 @@
 package com.propflow.user.infrastructure.entrypoint.web;
 
-import lombok.RequiredArgsConstructor;
+import com.propflow.user.infrastructure.entrypoint.web.advisor.AdvisorHandler;
+import com.propflow.user.infrastructure.entrypoint.web.document.DocumentHandler;
+import com.propflow.user.infrastructure.entrypoint.web.landlord.LandlordHandler;
+import com.propflow.user.infrastructure.entrypoint.web.tenant.TenantHandler;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.path;
-
 @Configuration
-@RequiredArgsConstructor
 public class UserRouterRest {
-    private final UserHandler handler;
 
     @Bean
-    public RouterFunction<ServerResponse> userRoutes() {
+    public RouterFunction<ServerResponse> landlordRoutes(LandlordHandler handler) {
         return RouterFunctions.route()
-
-                .nest(path("/api/v1"), builder -> builder
-
-                        .nest(path("/users"), userBuilder -> userBuilder
-                                .GET("/me",              handler::getMyProfile)
-                                .PUT("/me",              handler::updateMyProfile)
-
-                                //documentos
-                                .POST("/{id}/documents",              handler::requestUploadUrl)
-                                .GET("/{id}/documents",               handler::listDocuments)
-                                .PATCH("/{id}/documents/{docId}",     handler::verifyDocument)
-                                .DELETE("/{id}/documents/{docId}",    handler::deleteDocument)
-                        )
-                        .nest(path("/landlords"), landlLordBuilder -> landlLordBuilder
-                                .POST("",                         handler::createLandlord)
-                                .GET("",                          handler::listLandlords)
-                                .GET("/{id}",                     handler::getLandlord)
-                                .PUT("/{id}",                     handler::updateLandlord)
-                                .GET("/{id}/properties",          handler::getLandlordProperties)
-                                .GET("/{id}/contracts",           handler::getLandlordContracts)
-                        )
-                        .nest(path("/tenants"), tenantBuilder -> tenantBuilder
-                                .POST("",                           handler::createTenant)
-                                .GET("",                            handler::listTenants)
-                                .GET("/{id}",                       handler::getTenant)
-                                .PUT("/{id}",                       handler::updateTenant)
-                                .GET("/{id}/contracts",             handler::getTenantContracts)
-                        )
-                        .nest(path("/advisors"), advisorBuilder -> advisorBuilder
-                                .GET("",                           handler::listAdvisors)
-                                .GET("/{id}",                      handler::getAdvisor)
-                                .PUT("/{id}",                      handler::updateAdvisor)
-                                .GET("/{id}/assignments",          handler::getAdvisorAssignments)
-                                .GET("/{id}/commissions",          handler::getAdvisorCommissions)
-                                .POST("/{id}/assign",              handler::createAssignment)
-                                .DELETE("/{id}/assign/{assignId}", handler::revokeAssignment)
-                        )
-
-                ).build();
-
+                .POST("/api/v1/landlords",             handler::create)
+                .GET("/api/v1/landlords/{id}",          handler::getById)
+                .PUT("/api/v1/landlords/{id}",          handler::update)
+                .build();
     }
 
+    @Bean
+    public RouterFunction<ServerResponse> tenantRoutes(TenantHandler handler) {
+        return RouterFunctions.route()
+                .POST("/api/v1/tenants",                handler::create)
+                .GET("/api/v1/tenants/{id}",             handler::getById)
+                .GET("/api/v1/tenants",                  handler::list)
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> documentRoutes(DocumentHandler handler) {
+        return RouterFunctions.route()
+                .POST("/api/v1/users/{id}/documents",            handler::requestUploadUrl)
+                .PATCH("/api/v1/users/{id}/documents/{docId}",   handler::verify)
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> advisorRoutes(AdvisorHandler handler) {
+        return RouterFunctions.route()
+                .POST("/api/v1/advisors/{id}/assign",                 handler::createAssignment)
+                .DELETE("/api/v1/advisors/{id}/assign/{assignmentId}", handler::revokeAssignment)
+                .GET("/api/v1/advisors/{id}/assignments",             handler::listAssignments)
+                .build();
+    }
 }

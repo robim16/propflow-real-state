@@ -1,5 +1,9 @@
-package com.propflow.user.infrastructure.entrypoint.web.dto;
+package com.propflow.user.infrastructure.entrypoint.web.landlord.request;
 
+import com.propflow.user.domain.model.vo.UserId;
+import com.propflow.user.domain.port.in.CreateLandlordCommand;
+import com.propflow.user.domain.port.in.UpdateLandlordCommand;
+import com.propflow.user.infrastructure.entrypoint.web.dto.BankAccountRequest;
 import com.propflow.user.infrastructure.entrypoint.web.request.DocumentTypeRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -8,7 +12,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.apache.kafka.common.errors.InvalidRequestException;
 
-public record CreateLandlordRequest(
+public record UpdateLandlordRequest(
+
         @NotNull(message = "El tipo de documento es obligatorio")
         DocumentTypeRequest documentType,
 
@@ -27,8 +32,8 @@ public record CreateLandlordRequest(
         @Valid
         BankAccountRequest bankAccount
 ) {
-    // Compact constructor — validación estructural antes de llegar al dominio
-    public CreateLandlordRequest {
+
+    public UpdateLandlordRequest {
         if (documentType == DocumentTypeRequest.NIT && documentNumber != null) {
             if (!documentNumber.matches("^[0-9]{9,10}-[0-9]$")) {
                 throw new InvalidRequestException(
@@ -36,5 +41,17 @@ public record CreateLandlordRequest(
                 );
             }
         }
+    }
+
+    public UpdateLandlordCommand toCommand(UserId userId) {
+        return new UpdateLandlordCommand(
+                userId,
+                documentType().toDomain(),
+                documentNumber().trim(),
+                address().trim(),
+                bankAccount().bank().trim(),
+                bankAccount().accountType().toDomain(),
+                bankAccount().accountNumber()
+        );
     }
 }

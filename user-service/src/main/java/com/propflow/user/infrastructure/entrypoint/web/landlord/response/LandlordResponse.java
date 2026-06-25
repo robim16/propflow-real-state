@@ -1,4 +1,4 @@
-package com.propflow.user.infrastructure.entrypoint.web.response;
+package com.propflow.user.infrastructure.entrypoint.web.landlord.response;
 
 import com.propflow.user.domain.model.Landlord;
 import com.propflow.user.domain.model.vo.ProfileStatus;
