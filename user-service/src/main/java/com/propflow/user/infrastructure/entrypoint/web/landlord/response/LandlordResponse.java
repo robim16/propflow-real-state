@@ -18,7 +18,8 @@ public record LandlordResponse(
         Instant updatedAt
 ) {
     public static LandlordResponse from(Landlord l) {
-        return new LandlordResponse(l.id(), l.userId(), l.documentType(), l.documentNumber(),
-                l.address(), l.bankAccountLast4(), l, l.advisorId(), l.createdAt(), l.updatedAt());
+        return new LandlordResponse(l.getId().toString(), l.getUserId().toString(), l.getDocumentType().toString(), l.getDocumentNumber(),
+                l.getAddress(), l.getBankAccount().last4(), l.getStatus(), l.getAdvisorId(),
+                l.getCreatedAt(), l.getUpdatedAt());
     }
 }

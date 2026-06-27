@@ -1,5 +1,6 @@
 package com.propflow.user.application.usecase;
 
+import com.propflow.user.application.usecase.validator.NonDuplicatedValidator;
 import com.propflow.user.domain.model.Landlord;
 import com.propflow.user.domain.model.vo.BankAccount;
 import com.propflow.user.domain.port.in.CreateLandlordCommand;
@@ -18,28 +19,14 @@ import reactor.core.scheduler.Schedulers;
 public class CreateLanlordUseCaseImpl implements CreateLandlordUseCase {
     private final LandlordRepository landlordRepository;
     private final CryptoPort cryptoPort;
+    private final NonDuplicatedValidator duplicatedValidator;
 
     @Override
     public Mono<Landlord> createAndPersist(CreateLandlordCommand command) {
-        return validateDocumentNotDuplicated(command.documentNumber())
-                .then(validateAccountNotDuplicated(command.bankAccountNumber()))
+        return duplicatedValidator.validateDocumentNotDuplicated(command.documentNumber())
+                .then(duplicatedValidator.validateAccountNotDuplicated(command.bankAccountNumber()))
                 .then(Mono.defer(() -> buildLandlord(command)))
                 .flatMap(landlordRepository::save);
-    }
-
-    private Mono<Void> validateDocumentNotDuplicated(String documentNumber) {
-        return landlordRepository.existsByDocumentNumber(documentNumber)
-                .flatMap(exists -> exists
-                        ? Mono.error(new IllegalStateException("El número de documento ya existe."))
-                        : Mono.empty());
-    }
-
-    private Mono<Void> validateAccountNotDuplicated(String rawAccountNumber) {
-        var accountNumberHash = cryptoPort.hash(rawAccountNumber);
-        return landlordRepository.findByHashedAccountNumber(accountNumberHash)
-                .flatMap(found -> Mono.<Void>error(
-                        new IllegalStateException("El número de cuenta ya existe.")))
-                .switchIfEmpty(Mono.empty());
     }
 
     private Mono<Landlord> buildLandlord(CreateLandlordCommand command) {

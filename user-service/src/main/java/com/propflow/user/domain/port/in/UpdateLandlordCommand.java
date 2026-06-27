@@ -1,13 +1,12 @@
 package com.propflow.user.domain.port.in;
 
-import com.propflow.user.domain.model.vo.BankAccountType;
-import com.propflow.user.domain.model.vo.DocumentType;
-import com.propflow.user.domain.model.vo.UserId;
+import com.propflow.user.domain.model.vo.*;
 
 import java.util.Objects;
 
 public record UpdateLandlordCommand(
-        UserId userId,
+        LandlordId landlordId,
+        UserPrincipal principal,
         DocumentType documentType,
         String         documentNumber,
         String         address,
@@ -16,7 +15,7 @@ public record UpdateLandlordCommand(
         String         bankAccountNumber
 ) {
     public UpdateLandlordCommand {
-        Objects.requireNonNull(userId,            "userId es obligatorio");
+        Objects.requireNonNull(landlordId,            "landlordId es obligatorio");
         Objects.requireNonNull(documentType,      "documentType es obligatorio");
         Objects.requireNonNull(documentNumber,    "documentNumber es obligatorio");
         Objects.requireNonNull(address,           "address es obligatorio");

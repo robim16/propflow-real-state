@@ -1,6 +1,8 @@
 package com.propflow.user.infrastructure.entrypoint.web.landlord.request;
 
+import com.propflow.user.domain.model.vo.LandlordId;
 import com.propflow.user.domain.model.vo.UserId;
+import com.propflow.user.domain.model.vo.UserPrincipal;
 import com.propflow.user.domain.port.in.CreateLandlordCommand;
 import com.propflow.user.domain.port.in.UpdateLandlordCommand;
 import com.propflow.user.infrastructure.entrypoint.web.dto.BankAccountRequest;
@@ -43,9 +45,10 @@ public record UpdateLandlordRequest(
         }
     }
 
-    public UpdateLandlordCommand toCommand(UserId userId) {
+    public UpdateLandlordCommand toCommand(LandlordId landlordId, UserPrincipal principal) {
         return new UpdateLandlordCommand(
-                userId,
+                landlordId,
+                principal,
                 documentType().toDomain(),
                 documentNumber().trim(),
                 address().trim(),
