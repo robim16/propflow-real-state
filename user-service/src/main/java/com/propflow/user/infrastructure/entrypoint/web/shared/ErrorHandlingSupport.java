@@ -1,8 +1,8 @@
 package com.propflow.user.infrastructure.entrypoint.web.shared;
 
 import com.propflow.user.domain.exception.*;
-import com.propflow.user.infrastructure.entrypoint.web.shared.response.ErrorResponse;
 
+import com.propflow.user.infrastructure.entrypoint.web.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.server.ServerResponse;
 

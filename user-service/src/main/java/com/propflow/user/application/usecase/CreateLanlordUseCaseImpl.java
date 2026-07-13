@@ -23,8 +23,8 @@ public class CreateLanlordUseCaseImpl implements CreateLandlordUseCase {
 
     @Override
     public Mono<Landlord> createAndPersist(CreateLandlordCommand command) {
-        return duplicatedValidator.validateDocumentNotDuplicated(command.documentNumber())
-                .then(duplicatedValidator.validateAccountNotDuplicated(command.bankAccountNumber()))
+        return duplicatedValidator.validateDocumentNotDuplicated(command.documentNumber(), null)
+                .then(duplicatedValidator.validateAccountNotDuplicated(command.bankAccountNumber(), null))
                 .then(Mono.defer(() -> buildLandlord(command)))
                 .flatMap(landlordRepository::save);
     }

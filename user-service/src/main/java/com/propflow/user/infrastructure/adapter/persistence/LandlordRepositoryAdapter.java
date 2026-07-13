@@ -34,8 +34,9 @@ public class LandlordRepositoryAdapter implements LandlordRepository {
     }
 
     @Override
-    public Mono<Boolean> existsByDocumentNumber(String documentNumber) {
-        return r2dbcRepository.existsByDocumentNumber(documentNumber);
+    public Mono<Landlord> findByDocumentNumber(String documentNumber) {
+        return r2dbcRepository.findByDocumentNumber(documentNumber)
+                .map(mapper::toDomain);
     }
 
     @Override

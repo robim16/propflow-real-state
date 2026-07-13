@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface LandlordR2dbcRepository extends ReactiveCrudRepository<LandlordEntity, String> {
     Mono<LandlordEntity> findByAccountNumberHash(String accountNumberHash);
-    Mono<Boolean> existsByDocumentNumber(String documentNumber);
+    Mono<LandlordEntity> findByDocumentNumber(String documentNumber);
 }

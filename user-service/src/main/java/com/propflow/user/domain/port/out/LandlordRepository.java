@@ -8,6 +8,6 @@ public interface LandlordRepository {
     Mono<Landlord> save(Landlord landlord);
     Mono<Landlord> findById(LandlordId landlordId);
     Mono<Landlord> update(Landlord landlord);
-    Mono<Boolean> existsByDocumentNumber(String documentNumber);
+    Mono<Landlord>  findByDocumentNumber(String documentNumber);
     Mono<Landlord> findByHashedAccountNumber(String accountNumberHash);
 }

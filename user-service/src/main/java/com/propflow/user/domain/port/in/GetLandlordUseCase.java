@@ -6,5 +6,5 @@ import com.propflow.user.domain.model.vo.UserPrincipal;
 import reactor.core.publisher.Mono;
 
 public interface GetLandlordUseCase {
-    Mono<Landlord> execute(LandlordId landlordId, UserPrincipal userPrincipal);
+    Mono<Landlord> getLandlord(LandlordId landlordId, UserPrincipal userPrincipal);
 }

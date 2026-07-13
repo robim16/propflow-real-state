@@ -1,5 +1,6 @@
 package com.propflow.user.application.usecase;
 
+import com.propflow.user.domain.exception.LandlordNotFoundException;
 import com.propflow.user.domain.model.Landlord;
 import com.propflow.user.domain.model.vo.LandlordId;
 import com.propflow.user.domain.model.vo.UserPrincipal;
@@ -19,8 +20,9 @@ public class GetLandlordUseCaseImpl implements GetLandlordUseCase {
     private final LandlordRepository landlordRepository;
 
     @Override
-    public Mono<Landlord> execute(LandlordId landlordId, UserPrincipal principal) {
+    public Mono<Landlord> getLandlord(LandlordId landlordId, UserPrincipal principal) {
         return landlordRepository.findById(landlordId)
+                .switchIfEmpty(Mono.error(new LandlordNotFoundException(landlordId)))
                 .flatMap(landlord -> validateAccess(landlord, principal));
     }
 
