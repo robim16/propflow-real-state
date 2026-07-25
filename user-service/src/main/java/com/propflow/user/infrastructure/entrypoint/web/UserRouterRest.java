@@ -18,6 +18,7 @@ public class UserRouterRest {
     public RouterFunction<ServerResponse> landlordRoutes(LandlordHandler handler) {
         return RouterFunctions.route()
                 .POST("/api/v1/landlords",             handler::create)
+                .GET("/api/v1/landlords",                  handler::list)
                 .GET("/api/v1/landlords/{id}",          handler::getById)
                 .PUT("/api/v1/landlords/{id}",          handler::update)
                 .build();
@@ -28,7 +29,7 @@ public class UserRouterRest {
         return RouterFunctions.route()
                 .POST("/api/v1/tenants",                handler::create)
                 .GET("/api/v1/tenants/{id}",             handler::getById)
-                .GET("/api/v1/tenants",                  handler::list)
+                //.GET("/api/v1/tenants",                  handler::list)
                 .build();
     }
 

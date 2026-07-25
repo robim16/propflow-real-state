@@ -20,4 +20,16 @@ public class Tenant {
     private       String          advisorId;
     private final Instant createdAt;
     private       Instant         updatedAt;
+
+
+    public TenantId      getId()             { return id;             }
+    public UserId        getUserId()         { return userId;         }
+    public DocumentType  getDocumentType()   { return documentType;   }
+    public String        getDocumentNumber() { return documentNumber; }
+    public String        getAddress()        { return address;        }
+    public BankAccount   getBankAccount()    { return bankAccount;    }
+    public ProfileStatus getStatus()         { return status;         }
+    public String        getAdvisorId()      { return advisorId;      }
+    public Instant       getCreatedAt()      { return createdAt;      }
+    public Instant       getUpdatedAt()      { return updatedAt;      }
 }

@@ -4,6 +4,7 @@ import com.propflow.user.domain.model.vo.LandlordId;
 import com.propflow.user.domain.port.in.CreateLandlordUseCase;
 import com.propflow.user.domain.port.in.GetLandlordUseCase;
 import com.propflow.user.domain.port.in.UpdateLandlordUseCase;
+import com.propflow.user.domain.port.out.LandlordRepository;
 import com.propflow.user.infrastructure.entrypoint.web.landlord.request.CreateLandlordRequest;
 import com.propflow.user.infrastructure.entrypoint.web.landlord.request.UpdateLandlordRequest;
 import com.propflow.user.infrastructure.entrypoint.web.landlord.response.LandlordResponse;
@@ -41,11 +42,29 @@ public class LandlordHandler implements ErrorHandlingSupport {
         );
     }
 
+
+    public Mono<ServerResponse> list(ServerRequest request) {
+        var query = LandlordRepository.LandlordQuery.builder()
+                .advisorId(request.queryParam("advisorId").orElse(null))
+                .status(request.queryParam("status").orElse(null))
+                .page(Integer.parseInt(request.queryParam("page").orElse("0")))
+                .size(Integer.parseInt(request.queryParam("size").orElse("20")))
+                .build();
+
+        return withErrorHandling(
+                principalExtractor.extract(request)
+                        .flatMapMany(principal -> getLandlordUseCase.list(query, principal))
+                        .map(LandlordResponse::from)
+                        .collectList()
+                        .flatMap(landlords -> ServerResponse.ok().bodyValue(landlords))
+        );
+    }
+
     public Mono<ServerResponse> getById(ServerRequest request) {
         var landlordId = LandlordId.of(request.pathVariable("id"));
         return withErrorHandling(
                 principalExtractor.extract(request)
-                        .flatMap(principal -> getLandlordUseCase.execute(landlordId, principal))
+                        .flatMap(principal -> getLandlordUseCase.getLandlord(landlordId, principal))
                         .flatMap(landlord -> ServerResponse.ok().bodyValue(LandlordResponse.from(landlord)))
                         .flatMap(validator::validate)
         );
