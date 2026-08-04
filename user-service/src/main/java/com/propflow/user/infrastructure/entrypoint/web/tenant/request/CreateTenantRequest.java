@@ -3,6 +3,7 @@ package com.propflow.user.infrastructure.entrypoint.web.tenant.request;
 import com.propflow.user.domain.model.vo.UserId;
 import com.propflow.user.domain.port.in.CreateTenantCommand;
 import com.propflow.user.infrastructure.entrypoint.web.request.DocumentTypeRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -23,7 +24,15 @@ public record CreateTenantRequest(
 
         Boolean hasCoDebtor,
 
-        String advisorId
+        String advisorId,
+
+        @NotNull(message = "Los datos bancarios son obligatorios")
+        @Valid
+        TenantCoDebtorRequest tenantCoDebtorRequest,
+
+        @NotNull(message = "Los datos bancarios son obligatorios")
+        @Valid
+        TenantReferenceRequest tenantReferenceRequest
 ) {
 
     public CreateTenantRequest {
