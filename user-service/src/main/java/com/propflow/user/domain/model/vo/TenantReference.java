@@ -14,10 +14,6 @@ public class TenantReference {
     private final String        company;      // para referencias laborales
     private final String        position;     // para referencias laborales
 
-    public enum ReferenceType {
-        PERSONAL,
-        LABORAL
-    }
 
     // ── Factory method: referencia personal ──────────────────────────────
     public static TenantReference personal(

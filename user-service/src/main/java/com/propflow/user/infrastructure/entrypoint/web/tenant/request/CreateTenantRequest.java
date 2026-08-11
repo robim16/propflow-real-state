@@ -1,13 +1,20 @@
 package com.propflow.user.infrastructure.entrypoint.web.tenant.request;
 
+import com.propflow.user.domain.model.vo.CoDebtor;
+import com.propflow.user.domain.model.vo.DocumentType;
+import com.propflow.user.domain.model.vo.TenantReference;
 import com.propflow.user.domain.model.vo.UserId;
 import com.propflow.user.domain.port.in.CreateTenantCommand;
 import com.propflow.user.infrastructure.entrypoint.web.request.DocumentTypeRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import org.apache.kafka.common.errors.InvalidRequestException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public record CreateTenantRequest(
         @NotNull(message = "El tipo de documento es obligatorio")
@@ -20,19 +27,13 @@ public record CreateTenantRequest(
         )
         String documentNumber,
 
-        String status,
 
-        Boolean hasCoDebtor,
-
-        String advisorId,
-
-        @NotNull(message = "Los datos bancarios son obligatorios")
+        @NotEmpty(message = "Se requiere al menos una referencia")
         @Valid
-        TenantCoDebtorRequest tenantCoDebtorRequest,
+        List<TenantReferenceRequest> references,
 
-        @NotNull(message = "Los datos bancarios son obligatorios")
         @Valid
-        TenantReferenceRequest tenantReferenceRequest
+        TenantCoDebtorRequest coDebtor        // null si no tiene codeudor
 ) {
 
     public CreateTenantRequest {
@@ -46,11 +47,25 @@ public record CreateTenantRequest(
     }
 
     public CreateTenantCommand toCommand(UserId userId) {
-        return new CreateLandlordCommand(
-                userId,
-                documentType().toDomain(),
-                documentNumber().trim(),
+        List<TenantReference> domainReferences = references.stream()
+                .map(TenantReferenceRequest::toDomain)
+                .toList();
 
+        // Convierte el codeudor al value object del dominio (null si no viene)
+        CoDebtor domainCoDebtor = coDebtor != null
+                ? CoDebtor.of(
+                DocumentType.valueOf(coDebtor.documentType().name()),
+                coDebtor.documentNumber(),
+                coDebtor.name(),
+                coDebtor.phone())
+                : null;
+
+        return new CreateTenantCommand(
+                userId,
+                DocumentType.valueOf(documentType.name()),
+                documentNumber,
+                domainReferences,
+                domainCoDebtor
         );
     }
 }

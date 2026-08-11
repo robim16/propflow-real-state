@@ -153,10 +153,10 @@ public class Tenant {
                 && documentNumber != null && !documentNumber.isBlank();
 
         boolean tienePersonal = references != null && references.stream()
-                .anyMatch(r -> r.type() == TenantReference.ReferenceType.PERSONAL);
+                .anyMatch(r -> r.getType() == ReferenceType.PERSONAL);
 
         boolean tieneLaboral = references != null && references.stream()
-                .anyMatch(r -> r.type() == TenantReference.ReferenceType.LABORAL);
+                .anyMatch(r -> r.getType() == ReferenceType.LABORAL);
 
         return tieneDocumento && tienePersonal && tieneLaboral
                 ? ProfileStatus.COMPLETE
@@ -175,9 +175,9 @@ public class Tenant {
                     "Se requiere al menos una referencia personal y una laboral");
 
         boolean tienePersonal = references.stream()
-                .anyMatch(r -> r.type() == TenantReference.ReferenceType.PERSONAL);
+                .anyMatch(r -> r.getType() == ReferenceType.PERSONAL);
         boolean tieneLaboral  = references.stream()
-                .anyMatch(r -> r.type() == TenantReference.ReferenceType.LABORAL);
+                .anyMatch(r -> r.getType() == ReferenceType.LABORAL);
 
         if (!tienePersonal)
             throw new IllegalArgumentException("Se requiere al menos una referencia personal");
