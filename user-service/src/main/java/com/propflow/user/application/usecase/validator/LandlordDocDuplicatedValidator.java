@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
-public class NonDuplicatedValidator {
+public class LandlordDocDuplicatedValidator {
 
     private final LandlordRepository landlordRepository;
     private final CryptoPort cryptoPort;

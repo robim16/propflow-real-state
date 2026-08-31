@@ -1,10 +1,9 @@
 package com.propflow.user.application.usecase;
 
-import com.propflow.user.application.usecase.validator.NonDuplicatedValidator;
+import com.propflow.user.application.usecase.validator.LandlordDocDuplicatedValidator;
 import com.propflow.user.domain.exception.LandlordNotFoundException;
 import com.propflow.user.domain.model.Landlord;
 import com.propflow.user.domain.model.vo.BankAccount;
-import com.propflow.user.domain.port.in.CreateLandlordCommand;
 import com.propflow.user.domain.port.in.UpdateLandlordCommand;
 import com.propflow.user.domain.port.in.UpdateLandlordUseCase;
 import com.propflow.user.domain.port.out.CryptoPort;
@@ -21,7 +20,7 @@ import reactor.core.publisher.Mono;
 public class UpdateLandlordUseCaseImpl implements UpdateLandlordUseCase {
 
     private final LandlordRepository landlordRepository;
-    private final NonDuplicatedValidator duplicatedValidator;
+    private final LandlordDocDuplicatedValidator duplicatedValidator;
     private final CryptoPort cryptoPort;
 
     @Override

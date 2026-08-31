@@ -36,6 +36,6 @@ public class TenantHandler implements ErrorHandlingSupport {
 
     }
 
-    public Mono<ServerResponse> getById(ServerRequest request) {
-    }
+    //public Mono<ServerResponse> getById(ServerRequest request) {
+    //}
 }

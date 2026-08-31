@@ -1,6 +1,6 @@
 package com.propflow.user.application.usecase;
 
-import com.propflow.user.application.usecase.validator.NonDuplicatedValidator;
+import com.propflow.user.application.usecase.validator.LandlordDocDuplicatedValidator;
 import com.propflow.user.domain.model.Landlord;
 import com.propflow.user.domain.model.vo.BankAccount;
 import com.propflow.user.domain.port.in.CreateLandlordCommand;
@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @Slf4j
 @Service
@@ -19,7 +18,7 @@ import reactor.core.scheduler.Schedulers;
 public class CreateLanlordUseCaseImpl implements CreateLandlordUseCase {
     private final LandlordRepository landlordRepository;
     private final CryptoPort cryptoPort;
-    private final NonDuplicatedValidator duplicatedValidator;
+    private final LandlordDocDuplicatedValidator duplicatedValidator;
 
     @Override
     public Mono<Landlord> createAndPersist(CreateLandlordCommand command) {

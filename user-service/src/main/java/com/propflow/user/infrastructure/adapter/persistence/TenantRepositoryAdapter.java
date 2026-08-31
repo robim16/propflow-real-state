@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -33,6 +34,19 @@ public class TenantRepositoryAdapter implements TenantRepository {
                         (TenantEntity) savedEntity,
                         mapper.toReferenceEntities(tenant),
                         mapper.toCoDebtorEntity(tenant)
+                ));
+    }
+
+    @Override
+    public Mono<Tenant> findByDocumentNumber(String documentNumber) {
+        return r2dbcRepository.findByDocumentNumber(documentNumber)
+                .flatMap(entity -> Mono.zip(
+                        tenantReferenceR2dbcRepository.findByTenantId(entity.getId()).collectList(),
+                        tenantCoDebtorR2dbcRepository.findByTenantId(entity.getId())
+                                .map(Optional::of)
+                                .defaultIfEmpty(Optional.empty()),
+                        (references, coDebtor) ->
+                                mapper.toDomain(entity, references, coDebtor.orElse(null))
                 ));
     }
 

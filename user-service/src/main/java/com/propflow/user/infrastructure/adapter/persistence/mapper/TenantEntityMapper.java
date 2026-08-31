@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.propflow.user.domain.model.vo.ReferenceType.LABORAL;
+import static com.propflow.user.domain.model.vo.ReferenceType.PERSONAL;
+
 @Component
 public class TenantEntityMapper {
 
@@ -89,7 +92,7 @@ public class TenantEntityMapper {
         }
         return entities.stream()
                 .map(entity -> switch (
-                        TenantReference.ReferenceType.valueOf(entity.getReferenceType())) {
+                        ReferenceType.valueOf(entity.getReferenceType())) {
                     case PERSONAL -> TenantReference.personal(
                             entity.getName(),
                             entity.getPhone(),

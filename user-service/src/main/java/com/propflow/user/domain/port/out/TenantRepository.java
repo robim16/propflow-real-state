@@ -6,4 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface TenantRepository {
     Mono<Tenant> save(Tenant tenant);
+    Mono<Tenant> findByDocumentNumber(String documentNumber);
 }
