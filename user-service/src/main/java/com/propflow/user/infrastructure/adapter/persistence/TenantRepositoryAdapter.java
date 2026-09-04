@@ -1,6 +1,7 @@
 package com.propflow.user.infrastructure.adapter.persistence;
 
 import com.propflow.user.domain.model.Tenant;
+import com.propflow.user.domain.model.vo.TenantId;
 import com.propflow.user.domain.port.out.TenantRepository;
 import com.propflow.user.infrastructure.adapter.persistence.mapper.TenantEntityMapper;
 import com.propflow.user.infrastructure.adapter.persistence.repository.TenantCoDebtorR2dbcRepository;
@@ -9,6 +10,7 @@ import com.propflow.user.infrastructure.adapter.persistence.repository.TenantRef
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -35,6 +37,24 @@ public class TenantRepositoryAdapter implements TenantRepository {
                         mapper.toReferenceEntities(tenant),
                         mapper.toCoDebtorEntity(tenant)
                 ));
+    }
+
+    @Override
+    public Mono<Tenant> findById(TenantId tenantId) {
+        return r2dbcRepository.findById(tenantId.value())
+                .flatMap(entity -> Mono.zip(
+                        tenantReferenceR2dbcRepository.findByTenantId(entity.getId()).collectList(),
+                        tenantCoDebtorR2dbcRepository.findByTenantId(entity.getId())
+                                .map(Optional::of)
+                                .defaultIfEmpty(Optional.empty()),
+                        (references, coDebtor) ->
+                                mapper.toDomain(entity, references, coDebtor.orElse(null))
+                ));
+    }
+
+    @Override
+    public Flux<Tenant> findAll(TenantQuery query) {
+        return null;
     }
 
     @Override
