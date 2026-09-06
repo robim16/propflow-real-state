@@ -14,6 +14,7 @@ public interface TenantRepository {
 
     record TenantQuery(
          String status,
+         String advisorId,
          int    page,
          int    size
     ) {
@@ -21,14 +22,16 @@ public interface TenantRepository {
 
         public static class Builder {
             private String status;
+            private String advisorId;
             private int    page;
             private int    size;
 
             public Builder status(String status) { this.status = status; return this; }
             public Builder page(int page) { this.page = page; return this; }
             public Builder size(int size) { this.size = size; return this; }
+            public Builder advisorId(String advisorId) { this.advisorId = advisorId; return this; }
 
-            public TenantQuery build() { return new TenantQuery(status, page, size); }
+            public TenantQuery build() { return new TenantQuery(status, advisorId, page, size); }
 
         }
     }
