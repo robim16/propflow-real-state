@@ -30,7 +30,7 @@ public class GetTenantUseCaseImpl implements GetTenantUseCase {
     }
 
     @Override
-    public Flux<Tenant> getTenants(TenantRepository.TenantQuery query, UserPrincipal userPrincipal) {
+    public Flux<Tenant> getTenants(TenantQuery query, UserPrincipal userPrincipal) {
 
         return null;
     }
