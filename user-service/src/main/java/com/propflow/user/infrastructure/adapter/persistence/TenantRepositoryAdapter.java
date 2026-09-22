@@ -2,6 +2,7 @@ package com.propflow.user.infrastructure.adapter.persistence;
 
 import com.propflow.user.domain.model.Tenant;
 import com.propflow.user.domain.model.vo.TenantId;
+import com.propflow.user.domain.model.vo.UserId;
 import com.propflow.user.domain.port.out.TenantRepository;
 import com.propflow.user.infrastructure.adapter.persistence.mapper.TenantEntityMapper;
 import com.propflow.user.infrastructure.adapter.persistence.repository.TenantCoDebtorR2dbcRepository;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -54,7 +57,46 @@ public class TenantRepositoryAdapter implements TenantRepository {
 
     @Override
     public Flux<Tenant> findAll(TenantQuery query) {
-        return null;
+        return r2dbcRepository.findAllByFilters(
+                        query.advisorId(),
+                        query.status(),
+                        query.size(),
+                        (long) query.page() * query.size()
+                )
+                .collectList()
+                .flatMapMany(tenants -> {
+
+                    if (tenants.isEmpty()) {
+                        return Flux.empty();
+                    }
+
+                    // Extrae los ids de todos los tenants de la página
+                    var tenantIds = tenants.stream()
+                            .map(TenantEntity::getId)
+                            .toList();
+
+                    // Una sola query para todas las referencias de la página
+                    Mono<Map<String, Collection<TenantReferenceEntity>>> referencesByTenantId =
+                            tenantReferenceR2dbcRepository.findByTenantIdIn(tenantIds)
+                                    .collectMultimap(TenantReferenceEntity::getTenantId);
+
+                    Mono<Map<String, TenantCoDebtorEntity>> coDebtorsByTenantId =
+                            tenantCoDebtorR2dbcRepository.findByTenantIdIn(tenantIds)
+                                    .collectMap(TenantCoDebtorEntity::getTenantId);
+
+                    return Mono.zip(referencesByTenantId, coDebtorsByTenantId)
+                            .flatMapMany(tuple -> {
+                                var referencesMap = tuple.getT1();
+                                var coDebtorsMap  = tuple.getT2();
+
+                                return Flux.fromIterable(tenants)
+                                        .map(tenant -> mapper.toDomain(
+                                                tenant,
+                                                (List<TenantReferenceEntity>) referencesMap.getOrDefault(tenant.getId(), List.of()),
+                                                coDebtorsMap.getOrDefault(tenant.getId(), null)
+                                        ));
+                            });
+                });
     }
 
     @Override
@@ -68,6 +110,11 @@ public class TenantRepositoryAdapter implements TenantRepository {
                         (references, coDebtor) ->
                                 mapper.toDomain(entity, references, coDebtor.orElse(null))
                 ));
+    }
+
+    @Override
+    public Mono<Tenant> findByUserId(UserId userId) {
+        return null;
     }
 
     private Mono<Void> saveReferences(Tenant tenant) {

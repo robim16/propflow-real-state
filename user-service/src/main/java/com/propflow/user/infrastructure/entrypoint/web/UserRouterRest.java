@@ -29,7 +29,7 @@ public class UserRouterRest {
         return RouterFunctions.route()
                 .POST("/api/v1/tenants",                handler::create)
                 .GET("/api/v1/tenants/{id}",             handler::getById)
-                //.GET("/api/v1/tenants",                  handler::list)
+                .GET("/api/v1/tenants",                  handler::getTenants)
                 .build();
     }
 

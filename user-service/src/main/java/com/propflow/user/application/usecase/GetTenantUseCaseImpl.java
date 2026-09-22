@@ -31,8 +31,8 @@ public class GetTenantUseCaseImpl implements GetTenantUseCase {
 
     @Override
     public Flux<Tenant> getTenants(TenantQuery query, UserPrincipal userPrincipal) {
-
-        return null;
+        return validateListAccess(userPrincipal)
+                .thenMany(tenantRepository.findAll(buildQuery(query, userPrincipal)));
     }
 
     private Mono<Tenant> validateAccess(Tenant tenant, UserPrincipal principal) {

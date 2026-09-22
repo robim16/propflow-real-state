@@ -3,6 +3,7 @@ package com.propflow.user.domain.port.out;
 
 import com.propflow.user.domain.model.Tenant;
 import com.propflow.user.domain.model.vo.TenantId;
+import com.propflow.user.domain.model.vo.UserId;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -11,6 +12,7 @@ public interface TenantRepository {
     Mono<Tenant> findById(TenantId tenantId);
     Flux<Tenant> findAll(TenantQuery query);
     Mono<Tenant> findByDocumentNumber(String documentNumber);
+    Mono<Tenant> findByUserId(UserId userId);
 
     record TenantQuery(
          String status,
