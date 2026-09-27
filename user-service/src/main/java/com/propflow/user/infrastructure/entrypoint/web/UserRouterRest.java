@@ -30,6 +30,7 @@ public class UserRouterRest {
                 .POST("/api/v1/tenants",                handler::create)
                 .GET("/api/v1/tenants/{id}",             handler::getById)
                 .GET("/api/v1/tenants",                  handler::getTenants)
+                .PUT("/api/v1/tenants/{id}",                     handler::update)
                 .build();
     }
 

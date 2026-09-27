@@ -3,6 +3,7 @@ package com.propflow.user.infrastructure.entrypoint.web.tenant;
 import com.propflow.user.domain.model.vo.TenantId;
 import com.propflow.user.domain.port.in.CreateTenantUseCase;
 import com.propflow.user.domain.port.in.GetTenantUseCase;
+import com.propflow.user.domain.port.in.UpdateTenantUseCase;
 import com.propflow.user.domain.port.out.TenantRepository;
 import com.propflow.user.infrastructure.entrypoint.web.landlord.response.LandlordResponse;
 import com.propflow.user.infrastructure.entrypoint.web.shared.ErrorHandlingSupport;
@@ -27,6 +28,7 @@ public class TenantHandler implements ErrorHandlingSupport {
     private final RequestValidator validator;
     private final CreateTenantUseCase createTenantUseCase;
     private final GetTenantUseCase getTenantUseCase;
+    private final UpdateTenantUseCase updateTenantUseCase;
 
     public Mono<ServerResponse> create(ServerRequest request) {
         return withErrorHandling(
@@ -66,5 +68,8 @@ public class TenantHandler implements ErrorHandlingSupport {
                         .flatMap(tenants -> ServerResponse.ok().bodyValue(tenants))
         );
 
+    }
+
+    public Mono<ServerResponse> update(ServerRequest request) {
     }
 }
