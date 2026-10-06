@@ -3,6 +3,7 @@ package com.propflow.user.application.usecase;
 import com.propflow.user.domain.exception.TenantNotFoundException;
 import com.propflow.user.domain.model.Tenant;
 import com.propflow.user.domain.model.vo.TenantId;
+import com.propflow.user.domain.model.vo.UserId;
 import com.propflow.user.domain.model.vo.UserPrincipal;
 import com.propflow.user.domain.port.in.GetTenantUseCase;
 import com.propflow.user.domain.port.out.TenantRepository;
@@ -27,6 +28,12 @@ public class GetTenantUseCaseImpl implements GetTenantUseCase {
         return tenantRepository.findById(tenantId)
                 .switchIfEmpty(Mono.error(new TenantNotFoundException(tenantId)))
                 .flatMap(tenant -> validateAccess(tenant, userPrincipal));
+    }
+
+    @Override
+    public Mono<Tenant> executeByUserId(UserId userId) {
+        return tenantRepository.findByUserId(userId)
+                .switchIfEmpty(Mono.error(new TenantNotFoundException(userId)));
     }
 
     @Override

@@ -18,6 +18,7 @@ public class UserRouterRest {
     public RouterFunction<ServerResponse> landlordRoutes(LandlordHandler handler) {
         return RouterFunctions.route()
                 .POST("/api/v1/landlords",             handler::create)
+                .GET("/api/v1/landlords/me",        handler::getMyProfile)
                 .GET("/api/v1/landlords",                  handler::list)
                 .GET("/api/v1/landlords/{id}",          handler::getById)
                 .PUT("/api/v1/landlords/{id}",          handler::update)
@@ -28,6 +29,7 @@ public class UserRouterRest {
     public RouterFunction<ServerResponse> tenantRoutes(TenantHandler handler) {
         return RouterFunctions.route()
                 .POST("/api/v1/tenants",                handler::create)
+                .GET("/api/v1/tenants/me",                      handler::getMyProfile)
                 .GET("/api/v1/tenants/{id}",             handler::getById)
                 .GET("/api/v1/tenants",                  handler::getTenants)
                 .PUT("/api/v1/tenants/{id}",                     handler::update)
@@ -45,9 +47,13 @@ public class UserRouterRest {
     @Bean
     public RouterFunction<ServerResponse> advisorRoutes(AdvisorHandler handler) {
         return RouterFunctions.route()
-                .POST("/api/v1/advisors/{id}/assign",                 handler::createAssignment)
-                .DELETE("/api/v1/advisors/{id}/assign/{assignmentId}", handler::revokeAssignment)
-                .GET("/api/v1/advisors/{id}/assignments",             handler::listAssignments)
+                .GET("/api/v1/advisors", handler::getAdvisors)
+                .GET("/api/v1/advisors/me", handler::getMyProfile)
+                .GET("/api/v1/advisors/{id}",             handler::getById)
+                .PUT("/api/v1/advisors/{id}",                     handler::update)
+                //.POST("/api/v1/advisors/{id}/assign",                 handler::createAssignment)
+                //.DELETE("/api/v1/advisors/{id}/assign/{assignmentId}", handler::revokeAssignment)
+                //.GET("/api/v1/advisors/{id}/assignments",             handler::listAssignments)
                 .build();
     }
 }

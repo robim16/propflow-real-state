@@ -3,6 +3,7 @@ package com.propflow.user.application.usecase;
 import com.propflow.user.domain.exception.LandlordNotFoundException;
 import com.propflow.user.domain.model.Landlord;
 import com.propflow.user.domain.model.vo.LandlordId;
+import com.propflow.user.domain.model.vo.UserId;
 import com.propflow.user.domain.model.vo.UserPrincipal;
 import com.propflow.user.domain.port.in.GetLandlordUseCase;
 import com.propflow.user.domain.port.out.LandlordRepository;
@@ -32,6 +33,12 @@ public class GetLandlordUseCaseImpl implements GetLandlordUseCase {
     public Flux<Landlord> list(LandlordQuery query, UserPrincipal principal) {
         return validateListAccess(principal)
                 .thenMany(landlordRepository.findAll(buildQuery(query, principal)));
+    }
+
+    @Override
+    public Mono<Landlord> executeByUserId(UserId userId) {
+        return landlordRepository.findByUserId(userId)
+                .switchIfEmpty(Mono.error(new LandlordNotFoundException(userId)));
     }
 
     private Mono<Landlord> validateAccess(Landlord landlord, UserPrincipal principal) {

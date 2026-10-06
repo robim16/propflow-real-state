@@ -10,6 +10,7 @@ import com.propflow.user.infrastructure.entrypoint.web.shared.ErrorHandlingSuppo
 import com.propflow.user.infrastructure.entrypoint.web.shared.PrincipalExtractor;
 import com.propflow.user.infrastructure.entrypoint.web.shared.validation.RequestValidator;
 import com.propflow.user.infrastructure.entrypoint.web.tenant.request.CreateTenantRequest;
+import com.propflow.user.infrastructure.entrypoint.web.tenant.request.UpdateTenantRequest;
 import com.propflow.user.infrastructure.entrypoint.web.tenant.response.TenantResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -52,6 +53,14 @@ public class TenantHandler implements ErrorHandlingSupport {
         );
     }
 
+    public Mono<ServerResponse> getMyProfile(ServerRequest request) {
+        return withErrorHandling(
+                principalExtractor.extractUserId(request)
+                        .flatMap(userId -> getTenantUseCase.executeByUserId(userId))
+                                .flatMap(tenant -> ServerResponse.ok().bodyValue(TenantResponse.from(tenant)))
+        );
+    }
+
     public Mono<ServerResponse> getTenants(ServerRequest request) {
         var query = TenantRepository.TenantQuery.builder()
                 .advisorId(request.queryParam("advisorId").orElse(null))
@@ -71,5 +80,14 @@ public class TenantHandler implements ErrorHandlingSupport {
     }
 
     public Mono<ServerResponse> update(ServerRequest request) {
+        var tenantId = TenantId.of(request.pathVariable("id"));
+        return withErrorHandling(
+                principalExtractor.extract(request)
+                        .flatMap(principal -> request.bodyToMono(UpdateTenantRequest.class)
+                            .flatMap(validator::validate)
+                            .flatMap(body -> updateTenantUseCase.updateTenant(
+                                    body.toCommand(tenantId, principal))))
+                        .flatMap(tenant -> ServerResponse.ok().bodyValue(TenantResponse.from(tenant)))
+        );
     }
 }

@@ -100,6 +100,23 @@ public class Tenant {
         this.status     = computeStatus();
     }
 
+    public void updateProfile(
+            DocumentType          documentType,
+            String                documentNumber,
+            List<TenantReference> references,
+            CoDebtor              coDebtor) {
+
+        validateDocumentNumber(documentNumber);
+        validateReferences(references);
+
+        this.documentType   = documentType;
+        this.documentNumber = documentNumber;
+        this.references     = new ArrayList<>(references);
+        this.coDebtor       = coDebtor;
+        this.updatedAt      = Instant.now();
+        this.status         = computeStatus();
+    }
+
     public void updateCoDebtor(CoDebtor newCoDebtor) {
         this.coDebtor  = newCoDebtor;
         this.updatedAt = Instant.now();

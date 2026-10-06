@@ -3,7 +3,6 @@ package com.propflow.user.application.usecase;
 import com.propflow.user.application.usecase.validator.TenantDocDuplicatedValidator;
 import com.propflow.user.domain.exception.TenantNotFoundException;
 import com.propflow.user.domain.model.Tenant;
-import com.propflow.user.domain.port.in.CreateTenantCommand;
 import com.propflow.user.domain.port.in.UpdateTenantCommand;
 import com.propflow.user.domain.port.in.UpdateTenantUseCase;
 import com.propflow.user.domain.port.out.TenantRepository;
@@ -25,8 +24,8 @@ public class UpdateTenantUseCaseImpl implements UpdateTenantUseCase {
         return tenantRepository.findById(command.tenantId())
                 .switchIfEmpty(Mono.error(new TenantNotFoundException(command.tenantId())))
                 .flatMap(tenant -> validateUpdates(tenant, command))
-                .then(Mono.defer(()-> buildTenant(command)))
-                        .flatMap(tenantRepository::save);
+                .map(tenant -> applyUpdates(tenant, command))
+                .flatMap(tenantRepository::save);
     }
 
     private Mono<Tenant> validateUpdates(Tenant tenant, UpdateTenantCommand command) {
@@ -37,14 +36,13 @@ public class UpdateTenantUseCaseImpl implements UpdateTenantUseCase {
                 .thenReturn(tenant);
     }
 
-    private Mono<Tenant> buildTenant(UpdateTenantCommand command) {
-        var tenant = Tenant.create(
-                command.principal().userId(),
+    private Tenant applyUpdates(Tenant tenant, UpdateTenantCommand command) {
+        tenant.updateProfile(
                 command.documentType(),
                 command.documentNumber(),
                 command.references(),
                 command.coDebtor()
         );
-        return Mono.just(tenant);
+        return tenant;
     }
 }

@@ -114,7 +114,15 @@ public class TenantRepositoryAdapter implements TenantRepository {
 
     @Override
     public Mono<Tenant> findByUserId(UserId userId) {
-        return null;
+        return r2dbcRepository.findByUserId(userId)
+                .flatMap(entity -> Mono.zip(
+                        tenantReferenceR2dbcRepository.findByTenantId(entity.getId()).collectList(),
+                        tenantCoDebtorR2dbcRepository.findByTenantId(entity.getId())
+                                .map(java.util.Optional::of)
+                                .defaultIfEmpty(java.util.Optional.empty()),
+                        (references, coDebtor) ->
+                                mapper.toDomain(entity, references, coDebtor.orElse(null))
+                ));
     }
 
     private Mono<Void> saveReferences(Tenant tenant) {

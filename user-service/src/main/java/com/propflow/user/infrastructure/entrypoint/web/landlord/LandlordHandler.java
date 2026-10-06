@@ -81,4 +81,14 @@ public class LandlordHandler implements ErrorHandlingSupport {
                         .flatMap(landlord -> ServerResponse.ok().bodyValue(LandlordResponse.from(landlord)))
         );
     }
+
+    public Mono<ServerResponse> getMyProfile(ServerRequest request) {
+        var landlordId = LandlordId.of(request.pathVariable("id"));
+        return withErrorHandling(
+                principalExtractor.extractUserId(request)
+                        .flatMap(userId -> getLandlordUseCase.executeByUserId(userId))
+                        .flatMap(landlord -> ServerResponse.ok().bodyValue(LandlordResponse.from(landlord)))
+
+        );
+    }
 }
