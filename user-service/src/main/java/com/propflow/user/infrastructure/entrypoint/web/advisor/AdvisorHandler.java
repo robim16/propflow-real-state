@@ -6,6 +6,7 @@ import com.propflow.user.infrastructure.entrypoint.web.shared.ErrorHandlingSuppo
 import com.propflow.user.infrastructure.entrypoint.web.shared.PrincipalExtractor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -21,7 +22,24 @@ public class AdvisorHandler implements ErrorHandlingSupport {
 
         return withErrorHandling(
                 principalExtractor.extract(request)
-                        .flatMap(principal -> getAdvisorUseCase(advisorId))
-        )
+                        .flatMap(principal -> getAdvisorUseCase.getAdvisorById(advisorId))
+                        .flatMap(advisor -> ServerResponse.ok().bodyValue(advisor))
+        );
+    }
+
+    public Mono<ServerResponse> getAdvisors(ServerRequest request) {
+        return notImplemented();
+    }
+
+    public Mono<ServerResponse> getMyProfile(ServerRequest request) {
+        return notImplemented();
+    }
+
+    public Mono<ServerResponse> update(ServerRequest request) {
+        return notImplemented();
+    }
+
+    private Mono<ServerResponse> notImplemented() {
+        return ServerResponse.status(HttpStatus.NOT_IMPLEMENTED).build();
     }
 }

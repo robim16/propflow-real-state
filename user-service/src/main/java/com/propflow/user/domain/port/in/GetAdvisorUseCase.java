@@ -1,7 +1,7 @@
 package com.propflow.user.domain.port.in;
 
 import com.propflow.user.domain.model.vo.AdvisorId;
-import org.springframework.aop.Advisor;
+import com.propflow.user.domain.model.Advisor;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
