@@ -20,10 +20,10 @@ import java.util.Optional;
 public class GetAdvisorUseCaseImpl implements GetAdvisorUseCase {
     private final AdvisorRepository advisorRepository;
     @Override
-    public Mono<Optional<Advisor>> getAdvisorById(AdvisorId advisorId) {
+    public Mono<Advisor> getAdvisorById(AdvisorId advisorId,  UserPrincipal principal) {
         return advisorRepository.findById(advisorId)
                 .switchIfEmpty(Mono.error(new AdvisorNotFoundException(advisorId)))
-                .flatMap(advisor -> Mono.just(Optional.of(advisor)));
+                .flatMap(advisor -> Mono.just(advisor));
     }
 
     private Mono<Advisor> validateAccess(Advisor advisor, UserPrincipal principal) {

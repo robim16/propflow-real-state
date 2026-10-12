@@ -1,6 +1,7 @@
 package com.propflow.user.domain.model;
 
 import com.propflow.user.domain.model.vo.AdvisorId;
+import com.propflow.user.domain.model.vo.DocumentType;
 import com.propflow.user.domain.model.vo.ProfileStatus;
 import com.propflow.user.domain.model.vo.UserId;
 import lombok.Builder;
@@ -16,6 +17,7 @@ public class Advisor {
 
     private final AdvisorId id;
     private final UserId userId;
+    private DocumentType documentType;
     private       String          documentNumber;
     private       String          address;
     private ProfileStatus status;
