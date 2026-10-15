@@ -9,6 +9,7 @@ import com.propflow.user.domain.port.out.AdvisorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.nio.file.AccessDeniedException;
@@ -23,7 +24,12 @@ public class GetAdvisorUseCaseImpl implements GetAdvisorUseCase {
     public Mono<Advisor> getAdvisorById(AdvisorId advisorId,  UserPrincipal principal) {
         return advisorRepository.findById(advisorId)
                 .switchIfEmpty(Mono.error(new AdvisorNotFoundException(advisorId)))
-                .flatMap(advisor -> Mono.just(advisor));
+                .flatMap(advisor -> validateAccess(advisor, principal));
+    }
+
+    @Override
+    public Flux<Advisor> getAdvisors(UserPrincipal principal) {
+        return null;
     }
 
     private Mono<Advisor> validateAccess(Advisor advisor, UserPrincipal principal) {

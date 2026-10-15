@@ -25,8 +25,8 @@ public interface TenantRepository {
         public static class Builder {
             private String status;
             private String advisorId;
-            private int    page;
-            private int    size;
+            private int    page = 0;
+            private int    size = 20;
 
             public Builder status(String status) { this.status = status; return this; }
             public Builder page(int page) { this.page = page; return this; }

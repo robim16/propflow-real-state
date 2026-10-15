@@ -19,8 +19,25 @@ public class Advisor {
     private final UserId userId;
     private DocumentType documentType;
     private       String          documentNumber;
-    private       String          address;
     private ProfileStatus status;
     private Instant createdAt;
     private Instant               updatedAt;
+
+    public static Advisor reconstitute(
+            AdvisorId    id,
+            UserId       userId,
+            DocumentType documentType,
+            String       documentNumber,
+            ProfileStatus status,
+            Instant      createdAt,
+            Instant      updatedAt
+    ) {
+
+      var advisor = new Advisor(
+              id, userId, documentType, documentNumber, status,
+              createdAt, updatedAt
+      );
+
+      return advisor;
+    }
 }
